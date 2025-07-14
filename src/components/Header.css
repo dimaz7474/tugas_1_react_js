@@ -1,0 +1,84 @@
+.header {
+  background: linear-gradient(90deg, #ff4e50, #f9d423);
+  padding: 15px 0;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.nav a:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Hamburger menu */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.hamburger .bar {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #ff6f00;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .nav.open {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
