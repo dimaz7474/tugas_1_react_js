@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/tugas_1_react_js/static/css/main.ebc94559.css",
-    "main.js": "/tugas_1_react_js/static/js/main.5fdef422.js",
+    "main.js": "/tugas_1_react_js/static/js/main.f3a8aa92.js",
     "static/media/mie_goreng_jawa.png": "/tugas_1_react_js/static/media/mie_goreng_jawa.88db32db1795d14e4afa.png",
     "static/media/mie_goreng.png": "/tugas_1_react_js/static/media/mie_goreng.31a1c388eda6d57d7bb6.png",
     "static/media/mie_nyemek.jpg": "/tugas_1_react_js/static/media/mie_nyemek.42e332582acf01815da2.jpg",
     "static/media/mie_kuah_ayam.png": "/tugas_1_react_js/static/media/mie_kuah_ayam.376ed5858292b7826c59.png",
     "index.html": "/tugas_1_react_js/index.html",
     "main.ebc94559.css.map": "/tugas_1_react_js/static/css/main.ebc94559.css.map",
-    "main.5fdef422.js.map": "/tugas_1_react_js/static/js/main.5fdef422.js.map"
+    "main.f3a8aa92.js.map": "/tugas_1_react_js/static/js/main.f3a8aa92.js.map"
   },
   "entrypoints": [
     "static/css/main.ebc94559.css",
-    "static/js/main.5fdef422.js"
+    "static/js/main.f3a8aa92.js"
   ]
 }
