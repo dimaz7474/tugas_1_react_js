@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import MenuList from "../components/MenuList";
 import CatatanForm from "../components/CatatanForm";
+import FormAlamat from "../components/AlamatPengirimanForm";
 import WhatsAppButton from "../components/WhatsAppButton";
-import images from "../components/images"; // Assuming you have an images.js file exporting your images
+import images from "../components/images";
+import { hitungOngkir } from "../components/OngkirCalculator";
 
 const menuData = [
   {
@@ -16,7 +18,6 @@ const menuData = [
     kategori: "kuah",
     harga: 16000,
     image: images["Mie Nyemek Pedas"]
-    
   },
   {
     nama: "Mie Kuah Ayam",
@@ -41,6 +42,8 @@ const menuData = [
 const MenuProduk = () => {
   const [pesanan, setPesanan] = useState({});
   const [catatan, setCatatan] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [lokasi, setLokasi] = useState({ lat: -6.2, lng: 106.8 });
   const [searchTerm, setSearchTerm] = useState("");
   const [filterKategori, setFilterKategori] = useState("semua");
   const [sortOrder, setSortOrder] = useState("");
@@ -65,7 +68,6 @@ const MenuProduk = () => {
     }));
   };
 
-  // Filter khusus: Street Food Button
   const handleStreetFoodFilter = (tipe) => {
     switch (tipe) {
       case "pedas":
@@ -79,7 +81,6 @@ const MenuProduk = () => {
     }
   };
 
-  // Filter berdasarkan kategori + pencarian
   let filteredMenu = menuData.filter((item) => {
     const cocokKategori =
       filterKategori === "semua" || item.kategori === filterKategori;
@@ -87,7 +88,6 @@ const MenuProduk = () => {
     return cocokKategori && cocokSearch;
   });
 
-  // Sorting
   if (sortOrder === "asc") {
     filteredMenu.sort((a, b) => a.harga - b.harga);
   } else if (sortOrder === "desc") {
@@ -98,7 +98,7 @@ const MenuProduk = () => {
     <div style={{ padding: "20px" }}>
       <h2>Menu Produk</h2>
 
-      {/* Filter dan Search */}
+      {/* Filter dan Pencarian */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "15px" }}>
         <select value={filterKategori} onChange={(e) => setFilterKategori(e.target.value)}>
           <option value="semua">Semua Kategori</option>
@@ -121,7 +121,7 @@ const MenuProduk = () => {
         </select>
       </div>
 
-      {/* Tombol Gaya Street Food */}
+      {/* Filter cepat */}
       <div style={{ marginBottom: "20px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
         <button onClick={() => handleStreetFoodFilter("pedas")}>🔥 Pedas</button>
         <button onClick={() => handleStreetFoodFilter("telur")}>🥚 Pakai Telur</button>
@@ -137,7 +137,23 @@ const MenuProduk = () => {
       />
 
       <CatatanForm catatan={catatan} onChange={setCatatan} />
-      <WhatsAppButton pesanan={pesanan} catatan={catatan} menuData={menuData} />
+
+      <FormAlamat
+        alamat={alamat}
+        setAlamat={setAlamat}
+        lokasi={lokasi}
+        setLokasi={setLokasi}
+      />
+
+      <h3>Checkout</h3>
+
+      <WhatsAppButton
+        pesanan={pesanan}
+  catatan={catatan}
+  alamat={alamat}
+  lokasi={lokasi} // lokasi dalam format { lat, lng }
+  menuData={menuData}
+      />
     </div>
   );
 };
