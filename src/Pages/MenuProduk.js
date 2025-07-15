@@ -45,7 +45,6 @@ const MenuProduk = () => {
   const [lokasi, setLokasi] = useState({ lat: -6.2, lng: 106.8 });
   const [searchTerm, setSearchTerm] = useState("");
   const [filterKategori, setFilterKategori] = useState("semua");
-  const [sortOrder, setSortOrder] = useState("");
 
   const handleJumlahChange = (nama, jumlah) => {
     setPesanan((prev) => ({
@@ -87,12 +86,6 @@ const MenuProduk = () => {
     return cocokKategori && cocokSearch;
   });
 
-  if (sortOrder === "asc") {
-    filteredMenu.sort((a, b) => a.harga - b.harga);
-  } else if (sortOrder === "desc") {
-    filteredMenu.sort((a, b) => b.harga - a.harga);
-  }
-
   return (
     <div style={{
       padding: "1rem",
@@ -122,12 +115,6 @@ const MenuProduk = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ flex: "2" }}
         />
-
-        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} style={{ flex: "1" }}>
-          <option value="">Urutkan Harga</option>
-          <option value="asc">Termurah</option>
-          <option value="desc">Termahal</option>
-        </select>
       </div>
 
       {/* Filter Cepat */}
