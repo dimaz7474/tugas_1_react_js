@@ -4,7 +4,6 @@ import CatatanForm from "../components/CatatanForm";
 import FormAlamat from "../components/AlamatPengirimanForm";
 import WhatsAppButton from "../components/WhatsAppButton";
 import images from "../components/images";
-import { hitungOngkir } from "../components/OngkirCalculator";
 
 const menuData = [
   {
@@ -95,12 +94,22 @@ const MenuProduk = () => {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Menu Produk</h2>
+    <div style={{
+      padding: "1rem",
+      maxWidth: "800px",
+      margin: "auto",
+      fontFamily: "sans-serif"
+    }}>
+      <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Menu Produk</h2>
 
       {/* Filter dan Pencarian */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "15px" }}>
-        <select value={filterKategori} onChange={(e) => setFilterKategori(e.target.value)}>
+      <div style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "10px",
+        marginBottom: "15px"
+      }}>
+        <select value={filterKategori} onChange={(e) => setFilterKategori(e.target.value)} style={{ flex: "1" }}>
           <option value="semua">Semua Kategori</option>
           <option value="goreng">Mie Goreng</option>
           <option value="kuah">Mie Kuah</option>
@@ -111,18 +120,24 @@ const MenuProduk = () => {
           placeholder="Cari menu..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ flexGrow: 1 }}
+          style={{ flex: "2" }}
         />
 
-        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} style={{ flex: "1" }}>
           <option value="">Urutkan Harga</option>
           <option value="asc">Termurah</option>
           <option value="desc">Termahal</option>
         </select>
       </div>
 
-      {/* Filter cepat */}
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+      {/* Filter Cepat */}
+      <div style={{
+        marginBottom: "20px",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "10px",
+        justifyContent: "center"
+      }}>
         <button onClick={() => handleStreetFoodFilter("pedas")}>🔥 Pedas</button>
         <button onClick={() => handleStreetFoodFilter("telur")}>🥚 Pakai Telur</button>
         <button onClick={() => handleStreetFoodFilter("")}>🔄 Reset</button>
@@ -145,14 +160,14 @@ const MenuProduk = () => {
         setLokasi={setLokasi}
       />
 
-      <h3>Checkout</h3>
+      <h3 style={{ marginTop: "2rem" }}>Checkout</h3>
 
       <WhatsAppButton
         pesanan={pesanan}
-  catatan={catatan}
-  alamat={alamat}
-  lokasi={lokasi} // lokasi dalam format { lat, lng }
-  menuData={menuData}
+        catatan={catatan}
+        alamat={alamat}
+        lokasi={lokasi}
+        menuData={menuData}
       />
     </div>
   );
