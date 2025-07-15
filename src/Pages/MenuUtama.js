@@ -1,66 +1,63 @@
 import React, { Component } from "react";
-import ListMenuUtama from "../components/ListMenuUtama"; // pastikan path sesuai lokasi file
-import images from "../components/images"; 
-import ListMakanan from "../components/ListMakanan"; // sesuaikan path jika file ada di folder berbeda
+import ListMenuUtama from "../components/ListMenuUtama";
+import images from "../components/images";
+import ListMakanan from "../components/ListMakanan";
+
 class MenuUtama extends Component {
   render() {
+    const menuList = [
+      { nama: "Mie Goreng Spesial", gambar: images["Mie Goreng Spesial"] },
+      { nama: "Mie Nyemek Pedas", gambar: images["Mie Nyemek Pedas"] },
+      { nama: "Mie Kuah Ayam", gambar: images["Mie Kuah Ayam"] },
+      { nama: "Mie Kari Telur", gambar: images["Mie Kari Telur"] },
+      { nama: "Mie Goreng Jawa", gambar: images["Mie Goreng Jawa"] },
+    ];
+
     return (
-      <div>
-        <ListMenuUtama gambar={images["DK"]} width="75px" height="auto" />
-        <img 
-  src={this.props.gambar || images["DK"]} 
-  alt="Mrs. DK"
-  style={{ width: "30px", height: "auto" }}
-/>
-       <div>
+      <div style={{ padding: "20px" }}>
+        {/* Gambar utama */}
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <ListMenuUtama gambar={images["DK"]} />
+          <img
+           // src={images["DK"]}
+           // alt="Mrs. DK"
+            style={{ width: "75px", height: "auto", borderRadius: "50%" }}
+          />
+        </div>
+
         <h3>Daftar Makanan Yang Kami Sediakan :</h3>
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                 <ListMakanan gambar={images["Mie Goreng Spesial"]} width="75px" height="auto" />
-        <img 
-  src={this.props.gambar || images["Mie Goreng Spesial"]} 
-  alt="Mie Goreng Spesial"
-  style={{ width: "30px", height: "auto" }}
-/><p>Mie Goreng Spesial</p>
-              </td>
-              <td>
- <ListMakanan gambar={images["Mie Nyemek Pedas"]} width="75px" height="auto" />
-        <img 
-  src={this.props.gambar || images["Mie Nyemek Pedas"]} 
-  alt="Mie Nyemek Pedas"
-  style={{ width: "30px", height: "auto" }}
-/><p>Mie Nyemek Pedas</p>
-</td>
-              <td>
-                <ListMakanan gambar={images["Mie Kuah Ayam"]} width="75px" height="auto" />
-                <img
-                  src={this.props.gambar || images["Mie Kuah Ayam"]}
-                  alt="Mie Kuah Ayam"
-                  style={{ width: "30px", height: "auto" }} 
-                /><p>Mie Kuah Ayam</p>
-              </td>
-              <td>
-                <ListMakanan gambar={images["Mie Kari Telur"]} width="75px" height="auto" />
-                <img
-                  src={this.props.gambar || images["Mie Kari Telur"]}
-                  alt="Mie Kari Telur"
-                  style={{ width: "30px", height: "auto" }}
-                /><p>Mie Kari Telur</p>
-              </td>
-              <td>
-<ListMakanan gambar={images["Mie Goreng Jawa"]} width="75px" height="auto" />
-        <img 
-  src={this.props.gambar || images["Mie Goreng Jawa"]} 
-  alt="Mie Goreng Jawa"
-  style={{ width: "30px", height: "auto" }}
-/><p>Mie Goreng Jawa</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+
+        {/* List Makanan */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "20px",
+            justifyContent: "center",
+            marginTop: "20px"
+          }}
+        >
+          {menuList.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                width: "150px",
+                textAlign: "center",
+                border: "1px solid #ddd",
+                borderRadius: "10px",
+                padding: "10px"
+              }}
+            >
+              <ListMakanan gambar={item.gambar} />
+              <img
+                //src={item.gambar}
+                //alt={item.nama}
+                style={{ width: "100%", maxWidth: "100px", height: "auto" }}
+              />
+              <p style={{ marginTop: "10px", fontWeight: "bold" }}>{item.nama}</p>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
