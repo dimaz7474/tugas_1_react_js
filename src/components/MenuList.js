@@ -3,7 +3,15 @@ import MenuItem from "./MenuItem";
 
 const MenuList = ({ menuData, pesanan, onJumlahChange, onLevelChange }) => {
   return (
-    <ol style={{ listStyle: "none", padding: 0 }}>
+    <ul
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        gap: "20px",
+        padding: 0,
+        listStyle: "none"
+      }}
+    >
       {menuData.map((item) => (
         <MenuItem
           key={item.nama}
@@ -13,7 +21,7 @@ const MenuList = ({ menuData, pesanan, onJumlahChange, onLevelChange }) => {
           onLevelChange={onLevelChange}
         />
       ))}
-    </ol>
+    </ul>
   );
 };
 
