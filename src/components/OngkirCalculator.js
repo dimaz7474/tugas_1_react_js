@@ -1,8 +1,8 @@
 // components/OngkirCalculator.js
 
 export const lokasiToko = {
-  lat: -6.2564278, // Contoh: lokasi toko di Bekasi
-  lng: 106.9891436
+  lat: -6.4553553,  // Citra Indah Bukit Gladiola
+  lng: 107.0379105,
 };
 
 /**

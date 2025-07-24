@@ -7,8 +7,8 @@ const containerStyle = {
 };
 
 const defaultCenter = {
-  lat: -6.200000, // Jakarta
-  lng: 106.816666,
+  lat: -6.4553553, // citra indah
+  lng: 107.0379105,
 };
 
 const FormAlamat = ({ alamat, setAlamat, lokasi, setLokasi }) => {
