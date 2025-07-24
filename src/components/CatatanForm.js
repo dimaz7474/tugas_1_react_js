@@ -6,7 +6,7 @@ const CatatanForm = ({ catatan, onChange }) => {
       <label><strong>Catatan Tambahan</strong></label>
       <br />
       <textarea
-        placeholder="Contoh: Bungkus terpisah, tanpa cabe..."
+        placeholder="Contoh: Nama pembeli - Bungkus terpisah, telur rebus / mata sapi ,tanpa cabe..."
         rows="3"
         style={{ width: "100%", padding: "10px", marginTop: "5px" }}
         value={catatan}
