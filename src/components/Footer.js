@@ -14,7 +14,7 @@ const Footer = () => {
 
         <div className="footer-info">
           <h4>Kontak</h4>
-          <p>Jl. Lezat No. 17, Jakarta</p>
+          <p>Citra Indah Bukit Gladiola</p>
           <p>WA: 0813-8008-6961</p>
           <p>Jam Buka: 10.00 - 21.00</p>
         </div>
