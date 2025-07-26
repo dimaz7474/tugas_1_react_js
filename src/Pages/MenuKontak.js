@@ -4,7 +4,7 @@ class MenuKontak extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      alamat: "Jl. Lezat No. 17, Jakarta",
+      alamat: "Citra Indah Bukit Gladiola",
       kontak: "0813-8008-6961"
     };
   }
