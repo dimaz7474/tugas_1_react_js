@@ -23,6 +23,7 @@ const Header = () => {
           <Link to="/produk" onClick={() => setMenuOpen(false)}>Produk</Link>
           <Link to="/kontak" onClick={() => setMenuOpen(false)}>Kontak</Link>
           <Link to="/tentang" onClick={() => setMenuOpen(false)}>Tentang Kami</Link>
+          <Link to="/tracking" onClick={() => setMenuOpen(false)}>Lacak Pengiriman</Link>
         </nav>
         <div className="hamburger" onClick={toggleMenu}>
           <div className="bar"></div>

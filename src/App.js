@@ -10,6 +10,7 @@ import MenuUtama from "./Pages/MenuUtama";
 import MenuProduk from "./Pages/MenuProduk";
 import MenuKontak from "./Pages/MenuKontak";
 import MenuTentangKami from "./Pages/MenuTentangKami";
+import TrackingMap from './Pages/TrackingMap';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -69,6 +70,19 @@ const AnimatedRoutes = () => {
             </motion.div>
           }
         />
+        <Route
+          path="/tracking"
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <TrackingMap />
+            </motion.div>
+          }
+        />
       </Routes>
     </AnimatePresence>
   );
@@ -83,5 +97,5 @@ const App = () => (
     <Footer />
   </>
 );
-
+<Route path="/tracking" element={<TrackingMap />} />
 export default App;
