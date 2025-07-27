@@ -3,6 +3,7 @@ import {
   GoogleMap,
   Marker,
   DirectionsRenderer,
+  InfoWindow,
   useJsApiLoader,
 } from "@react-google-maps/api";
 
@@ -24,8 +25,9 @@ const TrackingMap = () => {
   const [route, setRoute] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
-  const [travelMode] = useState("DRIVING"); // bisa diubah ke WALKING, BICYCLING, TRANSIT
+  const [travelMode] = useState("DRIVING");
   const [antarAktif, setAntarAktif] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
@@ -36,7 +38,6 @@ const TrackingMap = () => {
     libraries: ["places"],
   });
 
-  // Inisialisasi autocomplete
   useEffect(() => {
     if (isLoaded && inputRef.current && !autocompleteRef.current) {
       const google = window.google;
@@ -61,6 +62,7 @@ const TrackingMap = () => {
 
         setAlamat(place.formatted_address);
         setLokasi(tujuan);
+        setShowInfo(false);
         if (map) map.panTo(tujuan);
       });
     }
@@ -134,6 +136,7 @@ const TrackingMap = () => {
 
         setAlamat(results[0].formatted_address);
         setLokasi(tujuan);
+        setShowInfo(false);
         if (map) map.panTo(tujuan);
       } else {
         alert("Alamat tidak ditemukan: " + status);
@@ -154,6 +157,7 @@ const TrackingMap = () => {
           lng: pos.coords.longitude,
         };
         setLokasi(tujuan);
+        setShowInfo(false);
 
         const google = window.google;
         if (google?.maps) {
@@ -180,6 +184,22 @@ const TrackingMap = () => {
     }
     setAntarAktif(true);
     getRoute(kurir, lokasi);
+  };
+
+  const handleDragEnd = (event) => {
+    const newPosition = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    };
+    setLokasi(newPosition);
+    setShowInfo(true);
+
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: newPosition }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        setAlamat(results[0].formatted_address);
+      }
+    });
   };
 
   if (loadError) return <div>Gagal memuat Google Maps.</div>;
@@ -210,8 +230,31 @@ const TrackingMap = () => {
           zoom={14}
           onLoad={(mapInstance) => setMap(mapInstance)}
         >
+          {/* Marker Kurir */}
           <Marker position={kurir} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} />
-          {lokasi && <Marker position={lokasi} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png" }} />}
+
+          {/* Marker Lokasi Tujuan yang bisa digeser */}
+          {lokasi && (
+            <Marker
+              position={lokasi}
+              icon={{ url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png" }}
+              draggable={true}
+              onDragEnd={handleDragEnd}
+              onClick={() => setShowInfo(true)}
+            >
+              {showInfo && (
+                <InfoWindow onCloseClick={() => setShowInfo(false)}>
+                  <div>
+                    <strong>Tujuan:</strong>
+                    <br />
+                    {alamat}
+                  </div>
+                </InfoWindow>
+              )}
+            </Marker>
+          )}
+
+          {/* Rute */}
           {route && <DirectionsRenderer directions={route} />}
         </GoogleMap>
       )}
