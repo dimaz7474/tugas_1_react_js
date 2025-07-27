@@ -1,193 +1,228 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, Marker, useJsApiLoader, Polyline } from '@react-google-maps/api';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 
 const containerStyle = {
-  width: '100%',
-  height: '400px',
+  width: "100%",
+  height: "400px",
 };
 
-const defaultPengantar = {
-  lat: -6.4553553,
-  lng: 107.0379105,
+const defaultCenter = {
+  lat: -6.455085624068794,
+  lng: 107.04061439882972,
 };
 
 const TrackingMap = () => {
+  const [alamat, setAlamat] = useState("");
+  const [lokasi, setLokasi] = useState(null);
+  const [kurir, setKurir] = useState(defaultCenter);
   const [map, setMap] = useState(null);
-  const [pengantar, setPengantar] = useState(defaultPengantar);
-  const [alamatTujuan, setAlamatTujuan] = useState('');
-  const [tujuan, setTujuan] = useState(null);
-  const [isTracking, setIsTracking] = useState(false);
+  const [route, setRoute] = useState(null);
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
+  const [travelMode] = useState("DRIVING"); // bisa diubah ke WALKING, BICYCLING, TRANSIT
+  const [antarAktif, setAntarAktif] = useState(false);
 
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
+  const animationRef = useRef(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ['places'],
+    libraries: ["places"],
   });
 
-  // Inisialisasi Autocomplete
+  // Inisialisasi autocomplete
   useEffect(() => {
     if (isLoaded && inputRef.current && !autocompleteRef.current) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
-        types: ['geocode'],
-        componentRestrictions: { country: 'id' },
+      const google = window.google;
+      if (!google || !google.maps.places) return;
+
+      autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
+        types: ["geocode"],
+        componentRestrictions: { country: "id" },
       });
 
-      autocompleteRef.current.addListener('place_changed', () => {
+      autocompleteRef.current.addListener("place_changed", () => {
         const place = autocompleteRef.current.getPlace();
         if (!place.geometry || !place.geometry.location) {
-          alert('Alamat tidak ditemukan dari autocomplete.');
+          alert("Alamat tidak ditemukan.");
           return;
         }
 
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-        const formatted = place.formatted_address;
+        const tujuan = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        };
 
-        setAlamatTujuan(formatted);
-        setTujuan({ lat, lng });
-        setIsTracking(false);
-        setTimeout(() => {
-          if (map) map.panTo({ lat, lng });
-        }, 100);
+        setAlamat(place.formatted_address);
+        setLokasi(tujuan);
+        if (map) map.panTo(tujuan);
       });
     }
   }, [isLoaded]);
 
-  // Simulasi pergerakan kurir setelah klik "Mulai Pengantaran"
-  useEffect(() => {
-    if (!isTracking) return;
+  const getRoute = (origin, destination) => {
+    const google = window.google;
+    if (!google || !google.maps) return;
 
-    const interval = setInterval(() => {
-      setPengantar((prev) => ({
-        ...prev,
-        lng: prev.lng + 0.0005, // bergerak ke kanan
-      }));
-    }, 2000);
+    const directionsService = new google.maps.DirectionsService();
 
-    return () => clearInterval(interval);
-  }, [isTracking]);
+    directionsService.route(
+      {
+        origin,
+        destination,
+        travelMode: google.maps.TravelMode[travelMode],
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          setRoute(result);
+          const leg = result.routes[0].legs[0];
+          setDistance(leg.distance.text);
+          setDuration(leg.duration.text);
+          animateKurir(origin, destination);
+        } else {
+          alert("Gagal mendapatkan rute: " + status);
+        }
+      }
+    );
+  };
 
-  // Fungsi geocode manual jika autocomplete tidak digunakan
-  const handleGeocode = () => {
-    if (!alamatTujuan.trim()) {
-      alert('Mohon isi alamat terlebih dahulu.');
+  const animateKurir = (from, to) => {
+    let progress = 0;
+    const steps = 100;
+
+    cancelAnimationFrame(animationRef.current);
+
+    const step = () => {
+      progress += 1;
+      const lat = from.lat + (to.lat - from.lat) * (progress / steps);
+      const lng = from.lng + (to.lng - from.lng) * (progress / steps);
+      setKurir({ lat, lng });
+
+      if (progress < steps) {
+        animationRef.current = requestAnimationFrame(step);
+      }
+    };
+
+    step();
+  };
+
+  const handleCariPeta = () => {
+    if (!alamat.trim()) {
+      alert("Mohon isi alamat terlebih dahulu.");
       return;
     }
 
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address: alamatTujuan }, (results, status) => {
-      if (status === 'OK' && results[0]) {
-        const loc = results[0].geometry.location;
-        const coords = {
-          lat: loc.lat(),
-          lng: loc.lng(),
+    const google = window.google;
+    if (!google || !google.maps) {
+      alert("Google Maps belum siap.");
+      return;
+    }
+
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address: alamat }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const tujuan = {
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
         };
-        setTujuan(coords);
-        setIsTracking(false);
-        setTimeout(() => {
-          if (map) map.panTo(coords);
-        }, 100);
+
+        setAlamat(results[0].formatted_address);
+        setLokasi(tujuan);
+        if (map) map.panTo(tujuan);
       } else {
-        alert('Gagal menemukan alamat: ' + status);
+        alert("Alamat tidak ditemukan: " + status);
       }
     });
   };
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      alert('Browser tidak mendukung geolokasi.');
+      alert("Geolokasi tidak didukung browser.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        setTujuan({ lat, lng });
-        setAlamatTujuan(''); // bisa reverse geocode jika ingin
-        setIsTracking(false);
-        setTimeout(() => {
-          if (map) map.panTo({ lat, lng });
-        }, 100);
+      (pos) => {
+        const tujuan = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        };
+        setLokasi(tujuan);
+
+        const google = window.google;
+        if (google?.maps) {
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ location: tujuan }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              setAlamat(results[0].formatted_address);
+            }
+          });
+        }
+
+        if (map) map.panTo(tujuan);
       },
-      (error) => {
-        alert('Gagal mendeteksi lokasi: ' + error.message);
+      (err) => {
+        alert("Gagal deteksi lokasi: " + err.message);
       }
     );
   };
 
-  if (loadError) return <div>Gagal memuat Google Maps</div>;
+  const handleMulaiAntar = () => {
+    if (!lokasi) {
+      alert("Pilih alamat tujuan terlebih dahulu.");
+      return;
+    }
+    setAntarAktif(true);
+    getRoute(kurir, lokasi);
+  };
 
-  return isLoaded ? (
-    <div style={{ padding: '20px' }}>
+  if (loadError) return <div>Gagal memuat Google Maps.</div>;
+
+  return (
+    <div style={{ padding: "20px" }}>
       <h2>Tracking Pengiriman</h2>
-
-      <div style={{ marginBottom: '10px' }}>
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Masukkan alamat tujuan"
-          value={alamatTujuan}
-          onChange={(e) => setAlamatTujuan(e.target.value)}
-          style={{ padding: '8px', width: '300px', marginRight: '10px' }}
-        />
-        <button onClick={handleGeocode}>Cari di Peta</button>
-        <button onClick={handleDetectLocation} style={{ marginLeft: '5px' }}>
-          Gunakan Lokasi Saya
-        </button>
-        <button
-          onClick={() => setIsTracking(true)}
-          style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white', padding: '6px 12px' }}
-          disabled={!tujuan}
-        >
-          Mulai Pengantaran
+      <input
+        ref={inputRef}
+        type="text"
+        value={alamat}
+        onChange={(e) => setAlamat(e.target.value)}
+        placeholder="Masukkan alamat tujuan"
+        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+      />
+      <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+        <button onClick={handleCariPeta}>Cari di Peta</button>
+        <button onClick={handleDetectLocation}>Gunakan Lokasi Saya</button>
+        <button onClick={handleMulaiAntar} style={{ background: "#28a745", color: "white" }}>
+          Mulai Mengantar
         </button>
       </div>
 
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={pengantar}
-        zoom={14}
-        onLoad={(mapInstance) => setMap(mapInstance)}
-      >
-        {/* Marker Kurir */}
-        <Marker
-          position={pengantar}
-          label="Kurir"
-          icon={{
-            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-          }}
-        />
+      {isLoaded && (
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={kurir}
+          zoom={14}
+          onLoad={(mapInstance) => setMap(mapInstance)}
+        >
+          <Marker position={kurir} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} />
+          {lokasi && <Marker position={lokasi} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png" }} />}
+          {route && <DirectionsRenderer directions={route} />}
+        </GoogleMap>
+      )}
 
-        {/* Marker Tujuan */}
-        {tujuan && tujuan.lat && tujuan.lng && (
-          <Marker
-            position={tujuan}
-            label="Tujuan"
-            icon={{
-              url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-            }}
-          />
-        )}
-
-        {/* Jalur Polyline */}
-        {tujuan && (
-          <Polyline
-            path={[pengantar, tujuan]}
-            options={{
-              strokeColor: '#FF0000',
-              strokeOpacity: 0.8,
-              strokeWeight: 2,
-            }}
-          />
-        )}
-      </GoogleMap>
+      {/* Estimasi Waktu & Jarak */}
+      {antarAktif && distance && duration && (
+        <div style={{ marginTop: "10px" }}>
+          <strong>Estimasi:</strong> {distance} ({duration})
+        </div>
+      )}
     </div>
-  ) : (
-    <p>Memuat peta...</p>
   );
 };
 
